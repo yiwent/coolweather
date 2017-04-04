@@ -13,6 +13,6 @@ public class HttpUtil {
     public static void sendOkhttpReques(String addres, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(addres).build();
-        client.newCall(request);
+        client.newCall(request).enqueue(callback);
     }
 }

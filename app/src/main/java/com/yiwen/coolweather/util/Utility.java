@@ -2,9 +2,11 @@ package com.yiwen.coolweather.util;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.yiwen.coolweather.db.City;
 import com.yiwen.coolweather.db.County;
 import com.yiwen.coolweather.db.Province;
+import com.yiwen.coolweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +47,7 @@ public class Utility {
 
     /**
      * 返回市的数据
+     *
      * @param response
      * @param proviceId
      * @return
@@ -53,12 +56,12 @@ public class Utility {
         if (!TextUtils.isEmpty(response)) {
 
             try {
-                JSONArray allCounty = new JSONArray(response);
-                for (int i = 0; i < allCounty.length(); i++) {
-                    JSONObject CityObject = allCounty.getJSONObject(i);
+                JSONArray allCity = new JSONArray(response);
+                for (int i = 0; i < allCity.length(); i++) {
+                    JSONObject CityObject = allCity.getJSONObject(i);
                     City city = new City();
                     city.setCiytName(CityObject.getString("name"));
-                    city.setCityCode(CityObject.getInt("weather_id"));
+                    city.setCityCode(CityObject.getInt("id"));
                     city.setProviceId(proviceId);
                     city.save();
                 }
@@ -69,6 +72,7 @@ public class Utility {
         }
         return false;
     }
+
     /**
      * 解析县返回数据
      *
@@ -86,6 +90,7 @@ public class Utility {
                     County county = new County();
                     county.setCountyName(CountyObject.getString("name"));
                     county.setWeatherId(CountyObject.getString("weather_id"));
+                    county.setCityId(cityId);
                     county.save();
                 }
                 return true;
@@ -94,6 +99,19 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static Weather handWeatherRespose(String response) {
+        try {
+            JSONObject jsonObject=new JSONObject(response);
+            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
+            String weatherContent=jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent, Weather.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 
 }

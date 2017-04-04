@@ -8,11 +8,11 @@ import org.litepal.crud.DataSupport;
  * Time: 22:10
  * FIXME
  */
-public class City extends DataSupport{
-    private int id;
+public class City extends DataSupport {
+    private int    id;
     private String ciytName;
-    private int cityCode;
-    private int proviceId;
+    private int    cityCode;
+    private int    proviceId;
 
     public int getId() {
         return id;

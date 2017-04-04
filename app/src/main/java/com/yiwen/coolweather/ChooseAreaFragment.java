@@ -2,6 +2,7 @@ package com.yiwen.coolweather;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +71,7 @@ public class ChooseAreaFragment extends Fragment {
         titleText = (TextView) view.findViewById(R.id.title_text);
         backButton = (Button) view.findViewById(R.id.back_button);
         listView = (ListView) view.findViewById(R.id.list_view);
-        adapt = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_list_item_1, dataList);
+        adapt = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapt);
         return view;
     }
@@ -87,6 +88,12 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEAVE_CITY) {
                     selectCity = cityList.get(position);
                     queryCounties();
+                }else if (currentLevel == LEAVE_COUNTY){
+                    String weatherId=countyList.get(position).getWeatherId();
+                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -173,7 +180,7 @@ public class ChooseAreaFragment extends Fragment {
     }
 
     private void showProgressDialog() {
-        if (progressDialog != null) {
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("正在加载...");
             progressDialog.setCanceledOnTouchOutside(false);
@@ -181,10 +188,10 @@ public class ChooseAreaFragment extends Fragment {
         progressDialog.show();
     }
 
-    private void queryCounties() {
+    private void queryCities() {
         titleText.setText(selectProvice.getProviceNane());
         backButton.setVisibility(View.VISIBLE);
-        cityList = DataSupport.where("proviceid=?",
+        cityList = DataSupport.where("proviceid = ?",
                 String.valueOf(selectProvice.getId())).find(City.class);
         if (cityList.size() > 0) {
             dataList.clear();
@@ -202,10 +209,10 @@ public class ChooseAreaFragment extends Fragment {
 
     }
 
-    private void queryCities() {
+    private void queryCounties() {
         titleText.setText(selectCity.getCiytName());
         backButton.setVisibility(View.VISIBLE);
-        countyList = DataSupport.where("cityid=?",
+        countyList = DataSupport.where("cityid = ?",
                 String.valueOf(selectCity.getId())).find(County.class);
         if (countyList.size() > 0) {
             dataList.clear();
